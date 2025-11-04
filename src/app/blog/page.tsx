@@ -4,20 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
+import {
+  PostModal,
+  type PortableTextBlock,
+  type PostModalData,
+} from "@/components/PostModal";
 import { Navbar } from "@/components/Navbar";
 import { client } from "@/lib/sanity.client";
-
-type PortableTextSpan = {
-  _key: string;
-  text?: string;
-};
-
-type PortableTextBlock = {
-  _key: string;
-  _type: string;
-  style?: string;
-  children?: PortableTextSpan[];
-};
 
 type SanityPost = {
   _id: string;
@@ -93,136 +86,34 @@ function resolveContent(post: SanityPost) {
     : post.contentEn;
 }
 
-function renderPortableText(blocks?: PortableTextBlock[]) {
-  if (!blocks || blocks.length === 0) {
-    return <p className="text-sm text-slate-500">ยังไม่มีเนื้อหา</p>;
-  }
+function mapPostToModalData(post: SanityPost): PostModalData {
+  const title = resolveTitle(post);
+  const categories = (post.categories ?? [])
+    .map((category) => category.titleTh?.trim() ?? category.titleEn?.trim())
+    .filter((value): value is string => Boolean(value));
 
-  return blocks.map((block) => {
-    if (block._type !== "block" || !block.children) {
-      return null;
-    }
-
-    const text = block.children.map((span) => span.text ?? "").join("");
-    if (!text.trim()) {
-      return null;
-    }
-
-    switch (block.style) {
-      case "h2":
-        return (
-          <h2 key={block._key} className="text-xl font-semibold text-slate-900">
-            {text}
-          </h2>
-        );
-      case "h3":
-        return (
-          <h3 key={block._key} className="text-lg font-semibold text-slate-900">
-            {text}
-          </h3>
-        );
-      default:
-        return (
-          <p key={block._key} className="text-sm leading-relaxed text-slate-700">
-            {text}
-          </p>
-        );
-    }
-  });
+  return {
+    title,
+    imageUrl: post.coverImage?.url ?? undefined,
+    imageAlt: post.coverImage?.alt ?? title,
+    imagePriority: true,
+    imageUnoptimized: true,
+    authorName: post.authorName?.trim() || undefined,
+    publishedLabel: formatDate(post.publishedAt) || "ยังไม่ระบุวันที่เผยแพร่",
+    categories,
+    content: resolveContent(post),
+    shareUrl: post.slug ? `/blog/${post.slug}` : undefined,
+  };
 }
 
-type PostModalProps = {
-  post: SanityPost;
-  onClose: () => void;
-};
-
-function PostModal({ post, onClose }: PostModalProps) {
-  const content = resolveContent(post);
-
-  useEffect(() => {
-    const handler = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [onClose]);
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 px-4 py-10">
-      <div className="absolute inset-0 z-0" onClick={onClose} aria-hidden />
-      <div
-        className="relative z-10 grid max-h-full w-full max-w-4xl overflow-hidden rounded-3xl bg-white shadow-2xl sm:max-h-[85vh] sm:grid-cols-[minmax(240px,320px),1fr]"
-        role="dialog"
-        aria-modal="true"
-        aria-label={resolveTitle(post)}
-      >
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white/80 text-slate-500 transition hover:border-slate-300 hover:text-slate-700"
-          aria-label="ปิดหน้าต่างบทความ"
-        >
-          ✕
-        </button>
-        <div className="flex h-full flex-col bg-white p-2.5 sm:border-r sm:border-slate-200">
-          <figure className="relative h-56 min-h-60 w-full flex-1 overflow-hidden rounded-2xl bg-slate-100 sm:h-full sm:min-h-96">
-            {post.coverImage?.url ? (
-              <Image
-                src={post.coverImage.url}
-                alt={post.coverImage.alt || resolveTitle(post)}
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 45vw, 320px"
-                className="object-cover"
-                priority
-                unoptimized
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center bg-slate-200 text-xs text-slate-500">
-                ไม่มีภาพหน้าปก
-              </div>
-            )}
-          </figure>
-        </div>
-        <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-6 py-8 sm:px-8">
-          <div className="space-y-2 text-center sm:text-left">
-            <p className="text-xs font-medium uppercase tracking-[0.3em] text-blue-500">
-              {formatDate(post.publishedAt) || "ไม่ระบุวันที่"}
-            </p>
-            <h2 className="text-2xl font-semibold text-slate-900">
-              {resolveTitle(post)}
-            </h2>
-            {post.authorName && (
-              <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
-                By {post.authorName}
-              </p>
-            )}
-            {post.categories && post.categories.length > 0 && (
-              <p className="text-xs text-slate-400">
-                {post.categories
-                  .map(
-                    (category) =>
-                      category.titleTh ?? category.titleEn ?? undefined,
-                  )
-                  .filter(Boolean)
-                  .join(" · ")}
-              </p>
-            )}
-          </div>
-
-          <div className="space-y-4">{renderPortableText(content)}</div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function BlogIndexPageContent() {
   const [posts, setPosts] = useState<SanityPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [selectedPost, setSelectedPost] = useState<SanityPost | null>(null);
+  const [pageSize, setPageSize] = useState(6);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     let isMounted = true;
@@ -257,6 +148,43 @@ function BlogIndexPageContent() {
     () => posts.filter((post) => Boolean(post.slug)),
     [posts],
   );
+
+  useEffect(() => {
+    const updatePageSize = () => {
+      if (typeof window === "undefined") {
+        return;
+      }
+      const nextSize = window.innerWidth < 640 ? 4 : 6;
+      setPageSize((prev) => (prev === nextSize ? prev : nextSize));
+    };
+
+    updatePageSize();
+    window.addEventListener("resize", updatePageSize);
+    return () => window.removeEventListener("resize", updatePageSize);
+  }, []);
+
+  useEffect(() => {
+    const maxPage = Math.max(
+      1,
+      Math.ceil(visiblePosts.length / (pageSize > 0 ? pageSize : 1)),
+    );
+    setCurrentPage((prev) => Math.min(prev, maxPage));
+  }, [visiblePosts.length, pageSize]);
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(visiblePosts.length / (pageSize > 0 ? pageSize : 1)),
+  );
+
+  const paginatedPosts =
+    pageSize > 0
+      ? visiblePosts.slice(
+          (currentPage - 1) * pageSize,
+          currentPage * pageSize,
+        )
+      : visiblePosts;
+
+  const modalPost = selectedPost ? mapPostToModalData(selectedPost) : null;
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
@@ -295,7 +223,7 @@ function BlogIndexPageContent() {
           </div>
         ) : (
           <section className="grid gap-8 text-left sm:grid-cols-2 lg:grid-cols-3">
-            {visiblePosts.map((post) => (
+            {paginatedPosts.map((post) => (
               <article
                 key={post._id}
                 className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white/80 shadow-sm transition hover:-translate-y-1 hover:border-blue-400 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
@@ -311,14 +239,14 @@ function BlogIndexPageContent() {
               >
                 <div className="relative h-44 w-full overflow-hidden bg-slate-100">
                   {post.coverImage?.url ? (
-                <Image
-                  src={post.coverImage.url}
-                  alt={post.coverImage.alt || resolveTitle(post)}
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="object-cover transition duration-300 group-hover:scale-105"
-                  unoptimized
-                />
+                    <Image
+                      src={post.coverImage.url}
+                      alt={post.coverImage.alt || resolveTitle(post)}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover transition duration-300 group-hover:scale-105"
+                      unoptimized
+                    />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-slate-200 text-xs text-slate-500">
                       ไม่มีภาพหน้าปก
@@ -357,6 +285,40 @@ function BlogIndexPageContent() {
           </section>
         )}
 
+        {visiblePosts.length > 0 && totalPages > 1 && (
+          <nav
+            aria-label="การแบ่งหน้าโพสต์"
+            className="mt-10 flex flex-col items-center gap-4 text-sm text-slate-500 sm:flex-row sm:justify-between"
+          >
+            <button
+              type="button"
+              onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+              disabled={currentPage === 1}
+              className="inline-flex items-center gap-2 rounded-full border border-slate-300 px-4 py-2 font-medium text-slate-600 transition hover:border-blue-300 hover:text-blue-600 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-300"
+            >
+              ← ก่อนหน้า
+            </button>
+
+            <div className="flex items-center gap-2">
+              <span>หน้า</span>
+              <span className="rounded-full bg-slate-100 px-3 py-1 font-semibold text-slate-700">
+                {currentPage}
+              </span>
+              <span>จาก</span>
+              <span className="font-medium text-slate-700">{totalPages}</span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+              disabled={currentPage === totalPages}
+              className="inline-flex items-center gap-2 rounded-full border border-slate-300 px-4 py-2 font-medium text-slate-600 transition hover:border-blue-300 hover:text-blue-600 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-300"
+            >
+              ถัดไป →
+            </button>
+          </nav>
+        )}
+
         <footer className="mt-16 flex flex-col items-center gap-3 text-center text-sm text-slate-500 sm:flex-row sm:justify-between">
           <span>ติดตามอัปเดตสินค้าและบทความใหม่ผ่านอีเมลของคุณ</span>
           <Link
@@ -368,8 +330,13 @@ function BlogIndexPageContent() {
         </footer>
       </main>
 
-      {selectedPost && (
-        <PostModal post={selectedPost} onClose={() => setSelectedPost(null)} />
+      {modalPost && (
+        <PostModal
+          post={modalPost}
+          onClose={() => setSelectedPost(null)}
+          closeAriaLabel="ปิดหน้าต่างบทความ"
+          addBottomPadding
+        />
       )}
     </div>
   );

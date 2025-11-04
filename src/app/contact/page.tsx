@@ -15,66 +15,66 @@ export default function ContactPage() {
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <Navbar />
 
-      <main className="mx-auto w-full max-w-6xl px-6 pt-10 pb-16 sm:pt-12">
-        <header className="mb-12 flex flex-col gap-4 text-center sm:mb-14">
+      <main className="mx-auto w-full max-w-5xl px-5 pt-8 pb-12 sm:pt-10">
+        <header className="mb-10 flex flex-col gap-3 text-center sm:mb-12">
           <p className="text-sm uppercase tracking-[0.4em] text-blue-500">
             Contact Feel Wood
           </p>
-          <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
+          <h1 className="text-4xl font-semibold tracking-tight sm:text-[2.75rem]">
             มาเยี่ยมชมโชว์รูมหรือพูดคุยกับทีม Feel Wood ได้ทุกวัน
           </h1>
-          <p className="mx-auto max-w-2xl text-base text-slate-600 sm:text-lg">
+          <p className="mx-auto max-w-2xl text-[0.95rem] leading-relaxed text-slate-600 sm:text-lg">
             เราพร้อมให้คำปรึกษาเรื่องวัสดุไม้ งานติดตั้ง และการดูแลหลังการขาย
             นัดหมายล่วงหน้า หรือแวะมาที่โชว์รูมเพื่อสัมผัสตัวอย่างสินค้าได้ทันที
           </p>
         </header>
 
-        <section className="grid gap-8 lg:grid-cols-[1.25fr,0.75fr]">
-          <div className="space-y-6 rounded-3xl border border-slate-200 bg-white/90 p-8 shadow-sm sm:p-10">
+        <section className="grid gap-6">
+          <div className="space-y-5 rounded-2xl border border-slate-200 bg-white/95 p-6 shadow-sm sm:p-7">
             <h2 className="text-2xl font-semibold text-slate-900">ข้อมูลติดต่อ</h2>
-            <dl className="grid gap-4 text-sm text-slate-600 sm:grid-cols-2 sm:gap-y-6">
-              <div className="space-y-1 rounded-2xl border border-slate-200/70 bg-slate-50/70 p-4">
-                <dt className="text-xs uppercase tracking-[0.3em] text-blue-500">
+            <dl className="grid gap-3 text-sm text-slate-600 sm:grid-cols-2 sm:gap-4">
+              <div className="space-y-1.5 rounded-xl border border-slate-200/80 bg-slate-50 p-3 sm:p-3.5">
+                <dt className="text-xs uppercase tracking-[0.25em] text-blue-500">
                   เบอร์ติดต่อ
                 </dt>
-                <dd className="text-base font-semibold text-slate-900">
+                <dd className="text-base font-semibold leading-snug text-slate-900">
                   <a href="tel:0826611414" className="hover:text-blue-600">
                     082-661-1414
                   </a>
                 </dd>
               </div>
-              <div className="space-y-1 rounded-2xl border border-slate-200/70 bg-slate-50/70 p-4">
-                <dt className="text-xs uppercase tracking-[0.3em] text-blue-500">
+              <div className="space-y-1.5 rounded-xl border border-slate-200/80 bg-slate-50 p-3 sm:p-3.5">
+                <dt className="text-xs uppercase tracking-[0.25em] text-blue-500">
                   เวลาทำการ
                 </dt>
-                <dd className="text-base font-semibold text-slate-900">
+                <dd className="text-base font-semibold leading-snug text-slate-900">
                   08.00 - 17.00 น.
                 </dd>
-                <dd className="text-xs text-slate-500">หยุดทุกวันศุกร์</dd>
+                <dd className="text-xs leading-relaxed text-slate-500">หยุดทุกวันศุกร์</dd>
               </div>
-              <div className="space-y-1 rounded-2xl border border-slate-200/70 bg-slate-50/70 p-4 sm:col-span-2">
-                <dt className="text-xs uppercase tracking-[0.3em] text-blue-500">
+              <div className="space-y-1.5 rounded-xl border border-slate-200/80 bg-slate-50 p-3 sm:p-3.5">
+                <dt className="text-xs uppercase tracking-[0.25em] text-blue-500">
                   Line Official
                 </dt>
-                <dd className="text-base font-semibold text-slate-900">
+                <dd className="text-base font-semibold leading-snug text-slate-900">
                   <button
                     type="button"
                     onClick={() => setIsLineModalOpen(true)}
-                    className="inline-flex items-center gap-2 text-blue-600 transition hover:text-blue-500"
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 transition hover:text-blue-500"
                   >
                     @feelwood
                     <span aria-hidden>→</span>
                   </button>
                 </dd>
               </div>
-              <div className="space-y-1 rounded-2xl border border-slate-200/70 bg-slate-50/70 p-4 sm:col-span-2">
-                <dt className="text-xs uppercase tracking-[0.3em] text-blue-500">
+              <div className="space-y-1.5 rounded-xl border border-slate-200/80 bg-slate-50 p-3 sm:p-3.5">
+                <dt className="text-xs uppercase tracking-[0.25em] text-blue-500">
                   Email
                 </dt>
-                <dd className="text-base font-semibold text-slate-900">
+                <dd className="text-base font-semibold leading-snug text-slate-900">
                   <a
                     href="mailto:feelwood.hdy@gmail.com"
-                    className="inline-flex items-center gap-2 hover:text-blue-600"
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold hover:text-blue-600"
                   >
                     feelwood.hdy@gmail.com
                   </a>
@@ -82,8 +82,8 @@ export default function ContactPage() {
               </div>
             </dl>
 
-            <div className="rounded-3xl border border-slate-200 bg-white p-2 shadow-inner">
-              <div className="relative aspect-[5/3] overflow-hidden rounded-[22px]">
+            <div className="rounded-2xl border border-slate-200 bg-white p-2 shadow-inner sm:p-2.5">
+              <div className="relative aspect-[5/3] overflow-hidden rounded-2xl">
                 <iframe
                   title="Feel Wood Location"
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.189346038667!2d100.42984227448319!3d6.986964017605149!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x304d27e7fb2af1d7%3A0xc2c87e5ef9af5e00!2zRmVlbCBXb29kICjguJ_guLXguKXguKfguLnguJQpIOC4h-C4suC4meC5hOC4oeC5iSDguJvguKPguLDguJXguLnguYTguKHguYkg4Lia4Lix4LiZ4LmE4LiU4LmE4Lih4LmJ!5e0!3m2!1sen!2sth!4v1762076641413!5m2!1sen!2sth"
@@ -93,7 +93,7 @@ export default function ContactPage() {
                   className="h-full w-full border-0"
                 />
               </div>
-              <p className="mt-2 text-xs text-slate-400">
+              <p className="mt-2 text-[11px] text-slate-400 sm:mt-3">
                 * พิกัดอ้างอิงจาก Google Maps{" "}
                 <Link
                   href="https://maps.app.goo.gl/nbeSovzNbRptmktE9"
@@ -106,39 +106,6 @@ export default function ContactPage() {
               </p>
             </div>
           </div>
-
-          <aside className="space-y-6">
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-slate-900">
-                นัดหมายล่วงหน้า?
-              </h2>
-              <p className="mt-2 text-sm text-slate-600">
-                ส่งรายละเอียดโปรเจ็กต์และเวลาที่สะดวกให้เรา ทีมงานจะติดต่อกลับภายใน 1 วันทำการ
-              </p>
-              <Link
-                href="mailto:feelwood.hdy@gmail.com"
-                className="mt-4 inline-flex items-center justify-center rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow hover:bg-blue-500"
-              >
-                ส่งอีเมลหาเรา
-              </Link>
-            </div>
-
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-slate-900">
-                ต้องการปรึกษาด่วน?
-              </h3>
-              <p className="mt-2 text-sm text-slate-600">
-                โทรหาเราได้ทันที หรือเพิ่ม LINE เพื่อคุยกับทีมงานแบบ real-time
-              </p>
-              <button
-                type="button"
-                onClick={() => setIsLineModalOpen(true)}
-                className="mt-4 inline-flex items-center justify-center rounded-full border border-green-500 px-5 py-2 text-sm font-semibold text-green-600 transition hover:bg-green-500 hover:text-white"
-              >
-                เปิด QR LINE Official
-              </button>
-            </div>
-          </aside>
         </section>
       </main>
 
